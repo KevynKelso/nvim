@@ -35,14 +35,17 @@ endsnippet
 
 snippet CLS "class boilerplate" A
 class $1 {
-  private:
+private:
     $2
-  public:
+public:
+	// Default constructor
+	$1() {
+	}
+	// Constructor
     $1($2) {
-	  $2 = $2;
 	}
 };
 endsnippet
 snippet #inc "" A
-#include <$1>
+#include $1
 endsnippet
