@@ -54,6 +54,8 @@ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 " python
 nnoremap <leader>0 :!python3.9 /Users/vyn/projects/beacon-loc/test/main.py<CR>
 map <c-_> <Plug>NERDCommenterToggle
+
+nnoremap <leader>c f{a<cr><esc>O
 " running files
 autocmd FileType cpp             nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Ag++ <C-\><C-n>"vpA -o a.out && ./a.out<CR>
 autocmd FileType python          nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Apython3 <C-\><C-n>"vpA<CR>

@@ -54,3 +54,11 @@ def start():
     browser.get(f'https://www.google.com/')
 	browser.quit()
 endsnippet
+
+snippet PLT_L "Basic matplotlib line plot" A
+plt.title("Reconstruction loss")
+plt.xlabel("1/2 batch")
+plt.ylabel("loss")
+plt.plot(df["ae_loss"])
+plt.show()
+endsnippet

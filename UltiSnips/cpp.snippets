@@ -39,13 +39,35 @@ private:
     $2
 public:
 	// Default constructor
-	$1() {
-	}
+	$1() {}
 	// Constructor
-    $1($2) {
-	}
+    $1($2) {}
 };
 endsnippet
 snippet #inc "" A
 #include $1
+endsnippet
+snippet NHF "" A
+#ifndef $1_H
+#define $1_H
+
+class $2 {
+private:
+    $3
+public:
+	// Default constructor
+	$2() {}
+	// Constructor
+    $2($3) {}
+};
+#endif
+endsnippet
+snippet NIF "" A
+// Implementation file for the $1 class
+#include <iostream>
+#include "$1.h"
+using namespace std;
+
+$1::$2() {}
+
 endsnippet
