@@ -21,11 +21,11 @@ call plug#begin()
 
 if has("nvim")
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'junegunn/fzf.vim'
   Plug 'neovim/nvim-lspconfig'
   Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
   Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-telescope/telescope.nvim'
   Plug 'glepnir/lspsaga.nvim'
   Plug 'jose-elias-alvarez/null-ls.nvim'
 endif

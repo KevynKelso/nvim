@@ -6,10 +6,12 @@
 " Telescope
 " test
 "
-nnoremap <leader>F <cmd>Telescope find_files<cr>
-nnoremap <leader>f <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+"nnoremap <leader>F <cmd>Telescope find_files<cr>
+"nnoremap <leader>f <cmd>Telescope live_grep<cr>
+"nnoremap <leader>fb <cmd>Telescope buffers<cr>
+"nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>F :Files<cr>
+nnoremap <leader>f :Rg<cr>
 " centering
 nnoremap n nzzzv
 nnoremap N Nzzzv
