@@ -30,4 +30,4 @@ set undodir=~/.vim/undodir
 set undofile
 set updatetime=50
 
-
+set t_ut=

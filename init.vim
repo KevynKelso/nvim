@@ -20,9 +20,10 @@ call plug#begin()
   Plug 'tpope/vim-fugitive'
 
 if has("nvim")
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+  "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
+  Plug 'morhetz/gruvbox'
   Plug 'neovim/nvim-lspconfig'
   Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
   Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
@@ -31,7 +32,8 @@ if has("nvim")
 endif
 call plug#end()
 
-colorscheme sonokai
+"set background=dark
+colorscheme gruvbox
 
 let mapleader = " "
 let maplocalleader = " "
@@ -44,4 +46,4 @@ let g:UltiSnipsJumpBackwardTrigger='<c-k>'
 "let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
 let g:coq_settings = { 'auto_start': v:true }
 
-let g:python3_host_prog = '/usr/local/bin/python3'
+"let g:python3_host_prog = '/usr/local/bin/python3'
