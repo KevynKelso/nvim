@@ -1,49 +1,56 @@
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
+source ~/.config/nvim/plugin/sets.vim
+source ~/.config/nvim/plugin/autocmds.vim
 source ~/.config/nvim/plugin/maps.vim
+"source ~/.config/nvim/plugin/lspconfig.rc.vim
 
 call plug#begin()
   Plug 'SirVer/ultisnips'
   Plug 'Yggdroot/indentLine'
   Plug 'airblade/vim-gitgutter'
-  Plug 'fatih/vim-go'
-  Plug 'leafgarland/typescript-vim'
-  Plug 'lervag/vimtex'
-  Plug 'maxmellon/vim-jsx-pretty'
-  Plug 'peitalin/vim-jsx-typescript'
-  Plug 'preservim/nerdcommenter'
   Plug 'sainnhe/sonokai'
-  Plug 'NLKNguyen/papercolor-theme'
-  Plug 'sbdchd/neoformat'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'tpope/vim-fugitive'
-
-if has("nvim")
-  "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
-  Plug 'morhetz/gruvbox'
-  Plug 'neovim/nvim-lspconfig'
+  "Plug 'tpope/vim-fugitive'
+
+if has("nvim")
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
-  Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
-  Plug 'glepnir/lspsaga.nvim'
-  Plug 'jose-elias-alvarez/null-ls.nvim'
+  Plug 'neovim/nvim-lspconfig'
 endif
 call plug#end()
 
-"set background=dark
-colorscheme gruvbox
+set background=dark
+let g:sonokai_style = 'shusia'
+let g:sonokai_better_performance = 1
+let g:airline_theme = 'sonokai'
+colorscheme sonokai
 
 let mapleader = " "
 let maplocalleader = " "
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='luna'
+"let g:airline_theme='luna'
 
-"let g:completion_enable_snippet='UltiSnips'
 let g:UltiSnipsJumpForwardTrigger='<c-j>'
 let g:UltiSnipsJumpBackwardTrigger='<c-k>'
-"let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
 let g:coq_settings = { 'auto_start': v:true }
 
+let $FZF_DEFAULT_OPTS = '--reverse'
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+-- Using this option may slow down your editor, and you may see some duplicate highlights.
+-- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+
+EOF
 "let g:python3_host_prog = '/usr/local/bin/python3'

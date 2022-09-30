@@ -1,0 +1,10 @@
+snippet gpio_setup "" A
+GPIO_DisablePullDown(6);
+GPIO_DisablePullUp(6);
+GPIO_SetOutputPinFunction(6, GPIO_PIN_FUNC_OUT_GPIO);
+GPIO_DisableInput(6);
+GPIO_SetLow(6);
+GPIO_EnableOutput(6);
+
+GPIO_Toggle(6);
+endsnippet

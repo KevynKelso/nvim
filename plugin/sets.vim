@@ -9,13 +9,13 @@ set hidden
 set incsearch
 set nobackup
 set noerrorbells
-set nohlsearch
+"set nohlsearch
 set noshowmode
 set noswapfile
 set nowrap
 set nu
 set relativenumber
-set scrolloff=4
+"set scrolloff=4
 set shiftwidth=4
 set shortmess+=c
 set signcolumn=yes

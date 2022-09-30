@@ -12,6 +12,8 @@
 "nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>F :Files<cr>
 nnoremap <leader>f :Rg<cr>
+nnoremap <leader>b :Buffers<cr>
+nnoremap <leader>t :Buffers<cr>z<cr>
 " centering
 nnoremap n nzzzv
 nnoremap N Nzzzv
@@ -33,8 +35,6 @@ nnoremap <silent>y<Leader>f :let @* = expand("%")<CR>
 nnoremap <C-p> :bp<CR>
 nnoremap <C-n> :bn<CR>
 nnoremap <Leader>d :bdelete<CR>
-nnoremap <Leader>h <C-w>h
-nnoremap <Leader>l <C-w>l
 noremap <Leader>s :UltiSnipsEdit<CR>
 nnoremap <Leader>w :wa<CR>
 nnoremap dl dt)
@@ -47,7 +47,6 @@ nnoremap <leader>gd :Gvdiffsplit!<CR>
 nnoremap gdh :diffget //2<CR>
 nnoremap gdl :diffget //3<CR>
 " blog
-nnoremap <leader>ts idate: "<esc>:put =strftime('%FT%T%z')<cr><esc>kJA"<esc>
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -58,7 +57,11 @@ nnoremap <leader>0 :!python3.9 /Users/vyn/projects/beacon-loc/test/main.py<CR>
 map <c-_> <Plug>NERDCommenterToggle
 
 nnoremap <leader>c f{a<cr><esc>O
+
+nnoremap <c-w>v <c-w>v<esc>:b#<cr>
+
 " running files
 autocmd FileType cpp             nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Ag++ <C-\><C-n>"vpA -o a.out && ./a.out<CR>
 autocmd FileType python          nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Apython3 <C-\><C-n>"vpA<CR>
-autocmd FileType markdown          nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Aglow <C-\><C-n>"vpA<CR>
+autocmd FileType markdown        nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Aglow <C-\><C-n>"vpA<CR>
+autocmd FileType c               nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Abu<CR>
