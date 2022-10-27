@@ -20,3 +20,5 @@ augroup KEVYN
   autocmd BufWritePost *.vim :exec 'so %'
 "  autocmd BufWritePost */scripts* :exec '!update_scripts_for_windows'
 augroup END
+
+" autocmd BufEnter * :AirlineRefresh

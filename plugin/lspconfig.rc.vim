@@ -2,11 +2,6 @@ if !exists('g:lspconfig')
   finish
 endif
 
-"nvim_lsp.clangd.setup {
-  "on_attach = on_attach,
-  "filetypes = { "c", "cpp", "ino", "h" },
-"}
-
 lua << EOF
 local nvim_lsp = require('lspconfig')
 local protocol = require('vim.lsp.protocol')
@@ -22,38 +17,25 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<Leader>k', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+  buf_set_keymap('n', '<Leader>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
 
-  --protocol.CompletionItemKind = {
-  --  '', -- Text
-  --  '', -- Method
-  --  '', -- Function
-  --  '', -- Constructor
-  --  '', -- Field
-  --  '', -- Variable
-  --  '', -- Class
-  --  'ﰮ', -- Interface
-  --  '', -- Module
-  --  '', -- Property
-  --  '', -- Unit
-  --  '', -- Value
-  --  '', -- Enum
-  --  '', -- Keyword
-  --  '﬌', -- Snippet
-  --  '', -- Color
-  --  '', -- File
-  --  '', -- Reference
-  --  '', -- Folder
-  --  '', -- EnumMember
-  --  '', -- Constant
-  --  '', -- Struct
-  --  '', -- Event
-  --  'ﬦ', -- Operator
-  --  '', -- TypeParameter
-  --}
 end
+local clangd_flags = {
+    "--background-index",
+    "--cross-file-rename",
+    "--clang-tidy",
+    "--header-insertion=never",
+--    "--compile-commands-dir=/home/vyn/projects/T9305/kevyn",
+    "--limit-references=500",
+    "--limit-results=50",
+    "--project-root=/home/vyn/projects/T9305",
+    "--remote-index-address=''",
+    "--all-scopes-completion",
+}
 
 nvim_lsp.clangd.setup {
   on_attach = on_attach,
+  cmd = { "clangd", unpack(clangd_flags) },
   filetypes = { "h", "c", "cpp" }
 }
 --nvim_lsp.ccls.setup {
@@ -66,8 +48,8 @@ nvim_lsp.pylsp.setup {
   settings = {
       configurationSources = {"flake8"},
       formatCommand = {"black"}
-  }
---  filetypes = { "python" }
+  },
+  filetypes = { "python" }
 }
 
 nvim_lsp.cmake.setup {

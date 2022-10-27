@@ -3,7 +3,7 @@ let &packpath = &runtimepath
 source ~/.config/nvim/plugin/sets.vim
 source ~/.config/nvim/plugin/autocmds.vim
 source ~/.config/nvim/plugin/maps.vim
-"source ~/.config/nvim/plugin/lspconfig.rc.vim
+source ~/.config/nvim/plugin/lspconfig.rc.vim
 
 call plug#begin()
   Plug 'SirVer/ultisnips'
@@ -14,7 +14,7 @@ call plug#begin()
   Plug 'vim-airline/vim-airline-themes'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
-  "Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-fugitive'
 
 if has("nvim")
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -24,19 +24,22 @@ endif
 call plug#end()
 
 set background=dark
-let g:sonokai_style = 'shusia'
+let g:sonokai_style = 'atlantis' 
 let g:sonokai_better_performance = 1
-let g:airline_theme = 'sonokai'
+let g:airline_theme = 'distinguished'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_highlighting_cache = 1
+let g:airline_powerline_fonts = 0
+let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
+let g:airline_skip_empty_sections = 1
 colorscheme sonokai
 
 let mapleader = " "
 let maplocalleader = " "
-let g:airline#extensions#tabline#enabled = 1
-"let g:airline_theme='luna'
 
 let g:UltiSnipsJumpForwardTrigger='<c-j>'
 let g:UltiSnipsJumpBackwardTrigger='<c-k>'
-let g:coq_settings = { 'auto_start': v:true }
+let g:coq_settings = { 'auto_start': 'shut-up' }
 
 let $FZF_DEFAULT_OPTS = '--reverse'
 
