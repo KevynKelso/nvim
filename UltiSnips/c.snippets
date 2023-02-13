@@ -1,12 +1,40 @@
 snippet gpio_setup "" A
-GPIO_DisablePullDown(6);
-GPIO_DisablePullUp(6);
-GPIO_SetOutputPinFunction(6, GPIO_PIN_FUNC_OUT_GPIO);
-GPIO_DisableInput(6);
-GPIO_SetLow(6);
-GPIO_EnableOutput(6);
+uint8_t gpio_test_pin = 6;
+GPIO_DisablePullDown(gpio_test_pin);
+GPIO_DisablePullUp(gpio_test_pin);
+GPIO_SetOutputPinFunction(gpio_test_pin, GPIO_PIN_FUNC_OUT_GPIO);
+GPIO_DisableInput(gpio_test_pin);
+GPIO_EnableOutput(gpio_test_pin);
+GPIO_SetLow(gpio_test_pin);
 
-GPIO_Toggle(6);
+GPIO_Toggle(gpio_test_pin);
+endsnippet
+
+snippet gpio_radio "" A
+uint8_t gpio_rx_pin = 6;
+GPIO_DisablePullDown(gpio_rx_pin);
+GPIO_DisablePullUp(gpio_rx_pin);
+GPIO_SetOutputPinFunction(gpio_rx_pin, GPIO_PIN_FUNC_OUT_RX_ON);
+GPIO_DisableInput(gpio_rx_pin);
+GPIO_EnableOutput(gpio_rx_pin);
+endsnippet
+
+snippet gpio_set_raw "" A
+uint8_t gpio = 6;
+GPIO->RegGPIOPdEn.r32 &= ~(1 << gpio);
+GPIO->RegGPIOPuEn.r32 &= ~(1 << gpio);
+uint8_t *pGpioOutSel = (uint8_t*)GPIO->RegGPIOOutSel0.r8;
+pGpioOutSel[gpio] = (uint8_t)GPIO_PIN_FUNC_OUT_GPIO; //lint !e415 !e416 !e661 !e662
+GPIO->RegGPIOInputEn.r32 &= ~(1 << gpio);
+GPIO->RegGPIOOutputEn.r32 |= 1 << gpio;
+GPIO->RegGPIODataOutClr.r32 = 1 << gpio;
+
+GPIO->RegGPIODataOut.r32 ^= (1 << gpio); // toggle
+endsnippet
+
+snippet inc_printf "" A
+#include "printf.h"
+#include "puts.h"
 endsnippet
 
 snippet Ffor "forward for loop boiler" A
