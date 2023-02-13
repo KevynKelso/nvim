@@ -20,7 +20,7 @@ endif
 call plug#end()
 
 set background=dark
-let g:sonokai_style = 'atlantis' 
+let g:sonokai_style = 'shusia'
 let g:sonokai_better_performance = 1
 let g:airline_theme = 'distinguished'
 let g:airline#extensions#tabline#enabled = 1
@@ -28,6 +28,7 @@ let g:airline_highlighting_cache = 1
 let g:airline_powerline_fonts = 0
 let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
 let g:airline_skip_empty_sections = 1
+let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.6, 'yoffset': 1.0 } }
 colorscheme sonokai
 
 let mapleader = " "
@@ -59,6 +60,7 @@ augroup KEVYN
   autocmd BufEnter *.{html,vim,javascript,typescript,typescriptreact,json,ts,tsx,cpp} setlocal shiftwidth=2 tabstop=2 softtabstop=2
   autocmd BufEnter *.go setlocal shiftwidth=8 tabstop=8 softtabstop=8
   autocmd BufWritePost *.vim :exec 'so %'
+  autocmd BufWritePost *{.c,.h} silent! :exec '!echo "bu" > ~/projects/Extra_Scripts/data/bu-message.txt'
 augroup END
 
 " Sets -----------------------------------------------------------------------
@@ -83,8 +85,6 @@ set shortmess+=c
 set signcolumn=yes
 set smartindent
 set splitright
-set statusline+=%=%-10.60{LspStatus()}\ %-.(%l,%c%V%)\ %P
-set statusline=%<%f\ %h%m%r
 set tabstop=4 softtabstop=4
 set termguicolors
 set timeoutlen=200
@@ -96,10 +96,13 @@ set t_ut=
 set autoread
 
 " Mappings -------------------------------------------------------------------
+" fzf
 nnoremap <leader>F :Files<cr>
 nnoremap <leader>f :Rg<cr>
+nnoremap <leader>t yiw:Rg <c-r>"<cr>
+vnoremap <leader>t y:Rg <c-r>"<cr>
 nnoremap <leader>b :Buffers<cr>
-nnoremap <leader>t :Buffers<cr>z<cr>
+nnoremap <leader>l yiw:Lines <c-r>"<cr>
 " jumplist mutations
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
@@ -119,6 +122,7 @@ nnoremap <Leader>n :cnext<CR>
 nnoremap <Leader>w :wa<CR>
 nnoremap <silent>y<Leader>f :let @* = expand("%")<CR>
 nnoremap dl dt)
+nnoremap <leader>j :call TrimWhitespace()<CR>
 noremap <Leader>s :UltiSnipsEdit<CR>
 tnoremap <Esc> <C-\><C-n>
 vnoremap <leader>k "ky :!echo "<c-R>k" \| nc localhost 10004<CR>
@@ -129,14 +133,16 @@ nnoremap <leader>gd :Gvdiffsplit!<CR>
 nnoremap gdh :diffget //2<CR>
 nnoremap gdl :diffget //3<CR>
 " quick edit files
-nnoremap <leader>i :e ~/.config/nvim/<CR>
+nnoremap <leader>i :e ~/.config/nvim/init.vim<CR>
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " python
-nnoremap <leader>0 :!python3.9 /Users/vyn/projects/beacon-loc/test/main.py<CR>
+nnoremap <leader>8 :!echo "b" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
+nnoremap <leader>0 :!echo "cb" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
+nnoremap <leader>9 :!echo "u" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
 map <c-_> <Plug>NERDCommenterToggle
 
 nnoremap <leader>c f{a<cr><esc>O
@@ -179,6 +185,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<Leader>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
 
 end
+
 local clangd_flags = {
     "--background-index",
     "--cross-file-rename",
@@ -187,10 +194,12 @@ local clangd_flags = {
     "--compile-commands-dir=/home/kkelso/projects/9305/kevyn",
     "--limit-references=500",
     "--limit-results=50",
-    "--project-root=/home/vyn/projects/T9305",
-    "--remote-index-address=''",
+    --"--project-root=/home/kkelso/projects/9305",
+    --"--remote-index-address=''",
     "--all-scopes-completion",
 }
+
+vim.lsp.set_log_level("debug")
 
 nvim_lsp.clangd.setup {
   on_attach = on_attach,
@@ -205,15 +214,15 @@ nvim_lsp.clangd.setup {
 nvim_lsp.pylsp.setup {
   on_attach = on_attach,
   settings = {
-      configurationSources = {"flake8"},
+      configurationSources = {"flake8", "isort"},
       formatCommand = {"black"}
   },
   filetypes = { "python" }
 }
 
-nvim_lsp.cmake.setup {
-  on_attach = on_attach,
-  filetypes = { "cmake" }
-}
+-- nvim_lsp.cmake.setup {
+--   on_attach = on_attach,
+--   filetypes = { "cmake" }
+-- }
 
 EOF
