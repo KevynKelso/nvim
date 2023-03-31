@@ -5,9 +5,10 @@ call plug#begin()
   Plug 'SirVer/ultisnips'
   Plug 'Yggdroot/indentLine'
   Plug 'airblade/vim-gitgutter'
-  Plug 'sainnhe/sonokai'
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+  " Plug 'sainnhe/sonokai'
+  Plug 'ellisonleao/gruvbox.nvim'
+  " Plug 'vim-airline/vim-airline'
+  " Plug 'vim-airline/vim-airline-themes'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'tpope/vim-fugitive'
@@ -20,16 +21,17 @@ endif
 call plug#end()
 
 set background=dark
-let g:sonokai_style = 'shusia'
-let g:sonokai_better_performance = 1
-let g:airline_theme = 'distinguished'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_highlighting_cache = 1
-let g:airline_powerline_fonts = 0
-let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
-let g:airline_skip_empty_sections = 1
+" let g:sonokai_style = 'shusia'
+" let g:sonokai_better_performance = 1
+"let g:airline_theme = 'distinguished'
+"let g:airline#extensions#tabline#enabled = 1
+" let g:airline_highlighting_cache = 1
+"let g:airline_powerline_fonts = 0
+"let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
+"let g:airline_skip_empty_sections = 1
 let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.6, 'yoffset': 1.0 } }
-colorscheme sonokai
+"colorscheme sonokai
+colorscheme gruvbox
 
 let mapleader = " "
 let maplocalleader = " "
@@ -87,10 +89,11 @@ set smartindent
 set splitright
 set tabstop=4 softtabstop=4
 set termguicolors
-set timeoutlen=200
+set timeoutlen=180
 set undodir=~/.vim/undodir
 set undofile
 set updatetime=50
+set smartcase
 
 set t_ut=
 set autoread
@@ -140,14 +143,13 @@ inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " python
+nnoremap <leader>7 :!echo "t" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
 nnoremap <leader>8 :!echo "b" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
 nnoremap <leader>0 :!echo "cb" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
 nnoremap <leader>9 :!echo "u" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
 map <c-_> <Plug>NERDCommenterToggle
 
 nnoremap <leader>c f{a<cr><esc>O
-
-nnoremap <c-w>v <c-w>v<esc>:b#<cr>
 
 " running files
 autocmd FileType cpp             nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Ag++ <C-\><C-n>"vpA -o a.out && ./a.out<CR>
@@ -192,8 +194,8 @@ local clangd_flags = {
     "--clang-tidy",
     "--header-insertion=never",
     "--compile-commands-dir=/home/kkelso/projects/9305/kevyn",
-    "--limit-references=500",
-    "--limit-results=50",
+    --"--limit-references=500",
+    --"--limit-results=50",
     --"--project-root=/home/kkelso/projects/9305",
     --"--remote-index-address=''",
     "--all-scopes-completion",
@@ -214,7 +216,7 @@ nvim_lsp.clangd.setup {
 nvim_lsp.pylsp.setup {
   on_attach = on_attach,
   settings = {
-      configurationSources = {"flake8", "isort"},
+      configurationSources = {"black"},
       formatCommand = {"black"}
   },
   filetypes = { "python" }
