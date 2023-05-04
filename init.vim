@@ -6,21 +6,21 @@ call plug#begin()
   Plug 'Yggdroot/indentLine'
   Plug 'airblade/vim-gitgutter'
   " Plug 'sainnhe/sonokai'
-  Plug 'ellisonleao/gruvbox.nvim'
   " Plug 'vim-airline/vim-airline'
   " Plug 'vim-airline/vim-airline-themes'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'tpope/vim-fugitive'
+  Plug 'sainnhe/gruvbox-material'
 
 if has("nvim")
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
   Plug 'neovim/nvim-lspconfig'
+  Plug 'ellisonleao/gruvbox.nvim'
 endif
 call plug#end()
 
-set background=dark
 " let g:sonokai_style = 'shusia'
 " let g:sonokai_better_performance = 1
 "let g:airline_theme = 'distinguished'
@@ -29,9 +29,17 @@ set background=dark
 "let g:airline_powerline_fonts = 0
 "let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
 "let g:airline_skip_empty_sections = 1
+
 let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.6, 'yoffset': 1.0 } }
-"colorscheme sonokai
-colorscheme gruvbox
+
+set background=dark
+let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_better_performance = 1
+let g:gruvbox_material_dim_inactive_windows = 1
+let g:gruvbox_material_transparent_background = 2
+
+colorscheme gruvbox-material
+let g:lightline = {'colorscheme' : 'gruvbox_material'}
 
 let mapleader = " "
 let maplocalleader = " "
@@ -94,10 +102,12 @@ set undodir=~/.vim/undodir
 set undofile
 set updatetime=50
 set smartcase
+set conceallevel=0
 
 set t_ut=
 set autoread
 
+hi DiagnosticVirtualTextWarn guifg=Gray ctermfg=Gray
 " Mappings -------------------------------------------------------------------
 " fzf
 nnoremap <leader>F :Files<cr>
@@ -137,6 +147,7 @@ nnoremap gdh :diffget //2<CR>
 nnoremap gdl :diffget //3<CR>
 " quick edit files
 nnoremap <leader>i :e ~/.config/nvim/init.vim<CR>
+nnoremap <leader>I :e ~/.ignore<CR>
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -201,7 +212,18 @@ local clangd_flags = {
     "--all-scopes-completion",
 }
 
-vim.lsp.set_log_level("debug")
+-- vim.lsp.set_log_level("debug")
+
+vim.diagnostic.config({
+    severity_sort = true,
+    virtual_text = {
+    },
+})
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] =
+    vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+        underline = false,
+    })
 
 nvim_lsp.clangd.setup {
   on_attach = on_attach,
@@ -216,11 +238,40 @@ nvim_lsp.clangd.setup {
 nvim_lsp.pylsp.setup {
   on_attach = on_attach,
   settings = {
-      configurationSources = {"black"},
-      formatCommand = {"black"}
+      pylsp = {
+          plugins = {
+              memestra = {
+                  enabled = true
+              },
+              black = {
+                  enabled = true
+              },
+              isort = {
+                  enabled = true
+              },
+              pycodestyle = {
+                  ignore = {'E501', 'E402'}
+              },
+          },
+          configurationSources = {"black"},
+          formatCommand = {"black"}
+      }
   },
   filetypes = { "python" }
 }
+
+function dump(o)
+if type(o) == 'table' then
+local s = '{ '
+for k,v in pairs(o) do
+if type(k) ~= 'number' then k = '"'..k..'"' end
+s = s .. '['..k..'] = ' .. dump(v) .. ','
+end
+return s .. '} '
+else
+return tostring(o)
+end
+end
 
 -- nvim_lsp.cmake.setup {
 --   on_attach = on_attach,
