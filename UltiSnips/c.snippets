@@ -46,14 +46,17 @@ snippet gpio_rx_debug_setup "" A
 endsnippet
 
 snippet printf_setup "printf boiler on GPIO 7" A
-// uart configuration for printf
 UART_RegisterModule();
 if (!PML_DidBootFromSleep())
 {
+	// Enable output on GPIO7 for UART TX, disable output on other pins
 	gGPIO_Config.hardwareState.RegGPIOOutputEn.r32 = (uint32_t)GPIO_MASK_PIN_7;
-    gGPIO_Config.hardwareState.RegGPIOPdEn.r32 = (uint32_t)0x000;
-    gGPIO_Config.hardwareState.RegGPIOPuEn.r32 = (uint32_t)GPIO_MASK_PIN_6 | (uint32_t)GPIO_MASK_PIN_7;
-    gGPIO_Config.hardwareState.RegGPIOOutSel1.regs.GPIOOutSel7 = (uint8_t)GPIO_PIN_FUNC_OUT_UART_TXD;
+	// Disable pull-downs on all pins
+	gGPIO_Config.hardwareState.RegGPIOPdEn.r32 = (uint32_t)0x000;
+	// Enable pull-up on GPIO7 only
+	gGPIO_Config.hardwareState.RegGPIOPuEn.r32 = (uint32_t)GPIO_MASK_PIN_7;
+	// Set the UART TX output function on GPIO7
+	gGPIO_Config.hardwareState.RegGPIOOutSel1.regs.GPIOOutSel7 = (uint8_t)GPIO_PIN_FUNC_OUT_UART_TXD;
 }
 endsnippet
 
@@ -86,5 +89,193 @@ endsnippet
 
 snippet Ffor "forward for loop boiler" A
 for (int $1 = 0; $1 < $2; $1++) {
+}
+endsnippet
+
+snippet wsfDynamicBufStats "Dynamic buffer stats for Packetcraft" A
+WsfBufPoolStat_t stats;
+const uint8_t numPool = WsfBufGetNumPool();
+
+printf("numPool = %d\n", numPool);
+
+for (uint8_t i = 0; i < numPool; i++)
+{
+WsfBufGetPoolStats(&stats, i);
+printf("\tbufSize: %d\n", stats.bufSize);
+printf("\tnumBuf: %d\n", stats.numBuf);
+printf("\tnumAlloc: %d\n", stats.numAlloc);
+printf("\tmaxAlloc: %d\n", stats.maxAlloc);
+printf("\tmaxReqLen: %d\n\n", stats.maxReqLen);
+}
+endsnippet
+
+snippet exceptions_setup "" A
+// TODO: Add ${COMMON_DIR}/${TARGET_HW}/includes/arc to cmakelists
+/**
+ * @brief EV_DivZero exception vector handler (Divide by zero, Integer
+ * exception)
+ *
+ * This is an example of handling the exception by printing a message and
+ * restarting the device
+ */
+#include "arc_reg.h"
+void _Interrupt EV_DivZeroHandler(void)
+{
+    // Exception Fault Address
+    const uint32_t faultAddress = ReadAUX((ARC_AUX_Register*)REG_EFA);
+
+    // We cannot use interrupts in the exception handlers so we can only use
+    // rudimentary UART instead of printf.
+    char messageBuf[100];
+    sprintf(messageBuf,
+            "Division by zero at address 0x%x.\n"
+            "Restarting due to hardware exception.\n",
+            faultAddress);
+    const uint16_t messageLen = (uint16_t)strlen(messageBuf);
+    // Calculate the time needed for transmission because the UART TX interrupt
+    // can't tell us.
+
+    UART_SendData(messageBuf, messageLen);
+    HaltCPU();
+}
+
+/**
+ * @brief EV_Misaligned exception vector handler (Misaligned data access)
+ *
+ * This one is not fully implemented to show that by default, exceptions return
+ * to the failed instruction.
+ */
+void _Interrupt EV_MalignedHandler(void)
+{
+    
+    const uint32_t returnAddress = ReadAUX((ARC_AUX_Register*)REG_ERET);
+    const uint32_t faultAddress = ReadAUX((ARC_AUX_Register*)REG_EFA);
+    char messageBuf[100];
+    sprintf(messageBuf, "Misaligned memory exception at 0x%x, faultAddress = 0x%x", returnAddress, faultAddress);
+    const uint16_t messageLen = (uint16_t)strlen(messageBuf);
+
+    UART_SendData(messageBuf, messageLen);
+    HaltCPU();
+}
+
+/**
+ * @brief EV_ProtV exception vector handler (Memory read/write protection)
+ *
+ * This is an example that outlines handling exception vector with multiple
+ * possible causes.
+ */
+void _Interrupt EV_ProtVHandler(void)
+{
+    // Exception Fault Address
+    const uint32_t faultAddress = ReadAUX((ARC_AUX_Register*)REG_EFA);
+    // Exception Cause Register
+    const uint32_t exceptionCause = ReadAUX((ARC_AUX_Register*)REG_ECR);
+
+    char messageBuf[100];
+    // ProtV vector handless many exceptions causes. We handle only stack
+    // over/under flow here.
+    // if (exceptionCause == STACK_VIOLATION_WRITE)
+    // {
+    //   char buff[10];
+    //   sprintf(buff, "read");
+    //   UART_SendData(buff, 4);
+    // }
+    // if ((exceptionCause == STACK_VIOLATION_READ) ||
+    //     (exceptionCause == STACK_VIOLATION_WRITE))
+    // {
+    //     sprintf(messageBuf,
+    //             "\nStack overflow at address: 0x%x.\n"
+    //             "Restarting due to hardware exception.\n",
+    //             faultAddress);
+    // }
+    // else
+    // {
+        sprintf(messageBuf,
+                "\nUnspecified memory violation at address: 0x%x.\n"
+                "Restarting due to hardware exception.\n",
+                faultAddress);
+    // }
+
+    const uint16_t messageLen    = (uint16_t)strlen(messageBuf);
+
+    UART_SendData(messageBuf, messageLen);
+    HaltCPU();
+}
+
+void _Interrupt MemoryErrorHandler(void)
+{
+    // Exception Fault Address
+    const uint32_t faultAddress = ReadAUX((ARC_AUX_Register*)REG_EFA);
+    // Exception Cause Register
+    const uint32_t exceptionCause = ReadAUX((ARC_AUX_Register*)REG_ECR);
+    char           messageBuf[100];
+
+    sprintf(messageBuf, "MemoryError exception at 0x%x.\ncause: 0x%x.\n", faultAddress, exceptionCause);
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
+}
+
+void _Interrupt InstructionErrorHandler(void)
+{
+    char messageBuf[100];
+    sprintf(messageBuf, "InstructionError exception");
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
+}
+
+void _Interrupt EV_MachineCheckHandler(void)
+{
+    char messageBuf[100];
+    sprintf(messageBuf, "EV_MachineCheck exception");
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
+}
+
+void _Interrupt EV_PrivilegeVHandler(void)
+{
+    char messageBuf[100];
+    sprintf(messageBuf, "EV_Privilege exception");
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
+}
+
+void _Interrupt EV_SWIHandler(void)
+{
+    char messageBuf[100];
+    sprintf(messageBuf, "EV_SWIHandler exception");
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
+}
+
+void _Interrupt EV_TrapHandler(void)
+{
+    char messageBuf[100];
+    sprintf(messageBuf, "EV_TrapHandler exception");
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
+}
+
+void _Interrupt EV_ExtensionHandler(void)
+{
+    char messageBuf[100];
+    sprintf(messageBuf, "EV_ExtensionHandler exception");
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
+}
+
+void _Interrupt EV_DCErrorHandler(void)
+{
+    char messageBuf[100];
+    sprintf(messageBuf, "EV_DCErrorHandler exception");
+    const uint16_t len = (uint16_t)strlen(messageBuf);
+    UART_SendData(messageBuf, len);
+    HaltCPU();
 }
 endsnippet

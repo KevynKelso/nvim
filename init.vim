@@ -5,9 +5,6 @@ call plug#begin()
   Plug 'SirVer/ultisnips'
   Plug 'Yggdroot/indentLine'
   Plug 'airblade/vim-gitgutter'
-  " Plug 'sainnhe/sonokai'
-  " Plug 'vim-airline/vim-airline'
-  " Plug 'vim-airline/vim-airline-themes'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'tpope/vim-fugitive'
@@ -16,37 +13,33 @@ call plug#begin()
 if has("nvim")
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+  Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+  Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
   Plug 'neovim/nvim-lspconfig'
+  Plug 'bluz71/vim-moonfly-colors', { 'as': 'moonfly' }
   Plug 'ellisonleao/gruvbox.nvim'
 endif
 call plug#end()
 
-" let g:sonokai_style = 'shusia'
-" let g:sonokai_better_performance = 1
-"let g:airline_theme = 'distinguished'
-"let g:airline#extensions#tabline#enabled = 1
-" let g:airline_highlighting_cache = 1
-"let g:airline_powerline_fonts = 0
-"let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
-"let g:airline_skip_empty_sections = 1
-
 let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.6, 'yoffset': 1.0 } }
 
 set background=dark
-let g:gruvbox_material_background = 'hard'
-let g:gruvbox_material_better_performance = 1
-let g:gruvbox_material_dim_inactive_windows = 1
-let g:gruvbox_material_transparent_background = 2
+" let g:gruvbox_material_background = 'hard'
+" let g:gruvbox_material_better_performance = 1
+" let g:gruvbox_material_dim_inactive_windows = 1
+" let g:gruvbox_material_transparent_background = 2
 
-colorscheme gruvbox-material
-let g:lightline = {'colorscheme' : 'gruvbox_material'}
+" colorscheme gruvbox-material
+" let g:lightline = {'colorscheme' : 'gruvbox_material'}
+colorscheme moonfly
+let g:lightline = { 'colorscheme': 'moonfly' }
 
 let mapleader = " "
 let maplocalleader = " "
 
 let g:UltiSnipsJumpForwardTrigger='<c-j>'
 let g:UltiSnipsJumpBackwardTrigger='<c-k>'
-let g:coq_settings = { 'auto_start': 'shut-up' }
+let g:coq_settings = { 'auto_start': 'shut-up', 'display.icons.spacing': 5 }
 
 let $FZF_DEFAULT_OPTS = '--reverse'
 
@@ -70,7 +63,7 @@ augroup KEVYN
   autocmd BufEnter *.{html,vim,javascript,typescript,typescriptreact,json,ts,tsx,cpp} setlocal shiftwidth=2 tabstop=2 softtabstop=2
   autocmd BufEnter *.go setlocal shiftwidth=8 tabstop=8 softtabstop=8
   autocmd BufWritePost *.vim :exec 'so %'
-  autocmd BufWritePost *{.c,.h} silent! :exec '!echo "bu" > ~/projects/Extra_Scripts/data/bu-message.txt'
+  autocmd BufWritePost *{.c,.h,CMakeLists.txt,.cmake} silent! :exec '!echo "bu" | nc localhost 65432'
 augroup END
 
 " Sets -----------------------------------------------------------------------
@@ -102,7 +95,9 @@ set undodir=~/.vim/undodir
 set undofile
 set updatetime=50
 set smartcase
-set conceallevel=0
+set pumblend=40
+hi PmenuSel blend=0
+hi PmenuSbar guifg=#11f0c3 guibg=#ff00ff
 
 set t_ut=
 set autoread
@@ -117,8 +112,8 @@ vnoremap <leader>t y:Rg <c-r>"<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>l yiw:Lines <c-r>"<cr>
 " jumplist mutations
-nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
-nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
+" nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
+" nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
 " undo breakpoints
 inoremap , ,<c-g>u
 inoremap . .<c-g>u
@@ -137,6 +132,7 @@ nnoremap <silent>y<Leader>f :let @* = expand("%")<CR>
 nnoremap dl dt)
 nnoremap <leader>j :call TrimWhitespace()<CR>
 noremap <Leader>s :UltiSnipsEdit<CR>
+" nnoremap <leader>k :!black %<CR>
 tnoremap <Esc> <C-\><C-n>
 vnoremap <leader>k "ky :!echo "<c-R>k" \| nc localhost 10004<CR>
 vnoremap J :m '>+1<CR>gv=gv
@@ -145,6 +141,7 @@ vnoremap K :m '<-2<CR>gv=gv
 nnoremap <leader>gd :Gvdiffsplit!<CR>
 nnoremap gdh :diffget //2<CR>
 nnoremap gdl :diffget //3<CR>
+vnoremap <silent> <c-u> <esc>:Gdiff<cr>gv:diffget<cr><c-w><c-w>ZZ
 " quick edit files
 nnoremap <leader>i :e ~/.config/nvim/init.vim<CR>
 nnoremap <leader>I :e ~/.ignore<CR>
@@ -154,10 +151,10 @@ inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " python
-nnoremap <leader>7 :!echo "t" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
-nnoremap <leader>8 :!echo "b" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
-nnoremap <leader>0 :!echo "cb" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
-nnoremap <leader>9 :!echo "u" > ~/projects/Extra_Scripts/data/bu-message.txt<CR>
+nnoremap <silent><leader>7 :exec '!echo "tt" \| nc localhost 65432'<CR>
+nnoremap <silent><leader>8 :exec '!echo "bb" \| nc localhost 65432'<CR>
+nnoremap <silent><leader>0 :exec '!echo "cb" \| nc localhost 65432'<CR>
+nnoremap <silent><leader>9 :exec '!echo "uu" \| nc localhost 65432'<CR>
 map <c-_> <Plug>NERDCommenterToggle
 
 nnoremap <leader>c f{a<cr><esc>O
@@ -169,6 +166,11 @@ autocmd FileType markdown        nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<
 autocmd FileType c               nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<CR>:term<CR>Abu<CR>
 
 lua << EOF
+vim.g.coq_settings = {
+  display = { icons = { mode = 'none'}, pum = { fast_close = false } },
+  auto_start = true,
+}
+require("coq")
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
@@ -193,6 +195,7 @@ local on_attach = function(client, bufnr)
 
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<Leader>sn', 'viwy:%s/<c-r>"/<c-r>"/g', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<Leader>k', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
   buf_set_keymap('n', '<Leader>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
@@ -250,7 +253,7 @@ nvim_lsp.pylsp.setup {
                   enabled = true
               },
               pycodestyle = {
-                  ignore = {'E501', 'E402'}
+                  ignore = {'E501', 'E402', 'W503'}
               },
           },
           configurationSources = {"black"},
