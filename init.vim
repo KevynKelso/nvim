@@ -112,8 +112,8 @@ vnoremap <leader>t y:Rg <c-r>"<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>l yiw:Lines <c-r>"<cr>
 " jumplist mutations
-" nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
-" nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
+nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
+nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
 " undo breakpoints
 inoremap , ,<c-g>u
 inoremap . .<c-g>u
@@ -168,7 +168,7 @@ autocmd FileType c               nnoremap <buffer> <Leader>v :let @v=@%<CR>:vsp<
 lua << EOF
 vim.g.coq_settings = {
   display = { icons = { mode = 'none'}, pum = { fast_close = false } },
-  auto_start = true,
+  auto_start = 'shut-up',
 }
 require("coq")
 require'nvim-treesitter.configs'.setup {
